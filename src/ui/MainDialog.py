@@ -23,7 +23,9 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         self.timer.start(1000/100)
         self._rebuildSticks()
 
-        self.mainHLayout.addWidget(ui.TextEditor.TextEditor())
+        self.expertEditor = ui.TextEditor.TextEditor()
+        self.mainHLayout.addWidget(self.expertEditor)
+
 
     def _onPollTimerTimeout(self):
         self.lastData = self.curData
