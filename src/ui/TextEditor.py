@@ -7,3 +7,6 @@ class TextEditor(QtWidgets.QTextEdit):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         self.setSizePolicy(sizePolicy)
+
+    def getCode(self):
+        return self.toPlainText()

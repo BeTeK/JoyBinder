@@ -2,7 +2,9 @@ from PyQt5 import QtWidgets, QtCore
 from ui.MainWindowUI import Ui_MainWindow
 import ui.JoystickWidget
 import ui.TextEditor
-
+import Options
+import ScriptRunner
+import time
 
 class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
@@ -16,6 +18,7 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.lastData = None
         self.curData = None
+        self.scriptRunner = ScriptRunner.ScriptRunner()
 
         self.joysticks = {}
         self.timer = QtCore.QTimer(self)
@@ -25,6 +28,12 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.expertEditor = ui.TextEditor.TextEditor()
         self.mainHLayout.addWidget(self.expertEditor)
+
+        self.restoreGeometry(Options.get("MainWindow-geometry", QtCore.QByteArray()))
+        self.restoreState(Options.get("MainWindow-state", QtCore.QByteArray()))
+        self.splitter.restoreGeometry(Options.get("MainWindow-splitter-geometry", QtCore.QByteArray()))
+        self.splitter.restoreState(Options.get("MainWindow-splitter-state", QtCore.QByteArray()))
+
 
 
     def _onPollTimerTimeout(self):
@@ -36,6 +45,10 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
         for i in self.curData:
             self.joysticks[i.guid].setJoyData(i)
+
+        self.scriptRunner.setScript(self.expertEditor.getCode())
+        if self.lastData is not None and self.curData is not None:
+            self.scriptRunner.runScript(self.lastData, self.curData, time.time())
 
 
     def _rebuildSticks(self):
@@ -54,6 +67,13 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.verticalLayout.addItem(QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding))
 
+    def closeEvent(self, event):
+        Options.set("MainWindow-geometry", self.saveGeometry())
+        Options.set("MainWindow-state", self.saveState())
+        Options.set("MainWindow-splitter-geometry", self.splitter.saveGeometry())
+        Options.set("MainWindow-splitter-state", self.splitter.saveState())
+
     def _quit(self):
+
         self.close()
 
