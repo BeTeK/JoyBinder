@@ -17,8 +17,10 @@ class ScriptRunner:
         self.globals["onJoyBtnDown"] = self._onJoyBtnDown
         self.globals["onJoyBtnUp"] = self._onJoyBtnUp
         self.globals["delay"] = self._delayCommand
-        self.globals["setBtn"] = self._setButtonCommand
-        self.globals["setKey"] = self._setKeyCommad
+        self.globals["setBtnDown"] = self._setButtonDownCommand
+        self.globals["setBtnUp"] = self._setButtonUpCommand
+        self.globals["setKeyDown"] = self._setKeyDownCommad
+        self.globals["setKeyUp"] = self._setKeyUpCommad
 
     def setScript(self, txt):
         self.txt = txt
@@ -33,6 +35,8 @@ class ScriptRunner:
         try:
             exec(self.txt, self.globals)
         except SyntaxError as e:
+            print(e)
+        except NameError as e:
             print(e)
 
         self._executeQueue(curTime)
@@ -73,19 +77,25 @@ class ScriptRunner:
     def _delayCommand(self, time):
         return self.curTime + (time / 1000.0)
 
-    def _setButtonCommand(self, joyId, down):
-        return lambda: self._setButton(joyId, down)
+    def _setButtonDownCommand(self, joyId):
+        return lambda: self._setButton(joyId, True)
+
+    def _setButtonUpCommand(self, joyId):
+        return lambda: self._setButton(joyId, False)
 
     def _setButton(self, joyId, down):
         print("push joy {0} state {1}".format(joyId, down))
 
-    def _setKeyCommad(self, key, down):
-        return lambda: self._setKey(key, down)
+    def _setKeyDownCommad(self, key):
+        return lambda: self._setKey(key, True)
+
+    def _setKeyUpCommad(self, key):
+        return lambda: self._setKey(key, False)
 
     def _setKey(self, key, down):
         if down:
-            pyautogui.keyUp(key)
-        else:
             pyautogui.keyDown(key)
+        else:
+            pyautogui.keyUp(key)
 
         print("push key {0} state {1}".format(key, down))
