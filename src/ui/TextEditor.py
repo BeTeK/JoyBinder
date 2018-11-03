@@ -10,3 +10,6 @@ class TextEditor(QtWidgets.QTextEdit):
 
     def getCode(self):
         return self.toPlainText()
+
+    def setCode(self, txt):
+        self.setText(txt)

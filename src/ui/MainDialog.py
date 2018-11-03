@@ -5,6 +5,8 @@ import ui.TextEditor
 import Options
 import ScriptRunner
 import time
+import os
+import ProfileFile
 
 class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
@@ -34,7 +36,39 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         self.splitter.restoreGeometry(Options.get("MainWindow-splitter-geometry", QtCore.QByteArray()))
         self.splitter.restoreState(Options.get("MainWindow-splitter-state", QtCore.QByteArray()))
 
+        self.saveMenuItem.triggered.connect(self._save)
+        self.saveAsMenuItem.triggered.connect(self._saveAs)
+        self.openMenuItem.triggered.connect(self._open)
+        self.currentFileName = None
 
+    def _open(self):
+        path = Options.get("open-path", "")
+        filePath = QtWidgets.QFileDialog.getOpenFileName(self, "Open profile", path, "Profile files (*.profile)")
+        if filePath is not None:
+            Options.set("open-path", filePath[0])
+            self.currentFileName = filePath[0]
+            file = ProfileFile.ProfileFile()
+            file.load(filePath[0])
+            self.expertEditor.setCode(file.getCode())
+
+    def _saveAs(self):
+        path = Options.get("open-path", "")
+        filePath = QtWidgets.QFileDialog.getSaveFileName(self, "Open profile", path, "Profile files (*.profile)")
+        if filePath is not None:
+            self._saveAsFile(filePath[0])
+
+
+    def _save(self):
+        if self.currentFileName is None:
+            self._saveAs()
+        else:
+            self._saveAsFile(self.currentFileName)
+
+    def _saveAsFile(self, filePath):
+        file = ProfileFile.ProfileFile()
+        self.currentFileName = filePath
+        file.setCode(self.expertEditor.getCode())
+        file.save(filePath)
 
     def _onPollTimerTimeout(self):
         self.lastData = self.curData
