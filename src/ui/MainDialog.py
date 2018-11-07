@@ -7,6 +7,7 @@ import ScriptRunner
 import time
 import os
 import ProfileFile
+import ui.ProfileOptions
 
 class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
@@ -40,6 +41,7 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         self.saveAsMenuItem.triggered.connect(self._saveAs)
         self.openMenuItem.triggered.connect(self._open)
         self.currentFileName = None
+        self.options = None
 
     def _open(self):
         path = Options.get("open-path", "")
@@ -84,12 +86,19 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.lastData is not None and self.curData is not None:
             self.scriptRunner.runScript(self.lastData, self.curData, time.time())
 
+        if self.options is not None:
+            self.options.setJoyData(self.joysticks)
 
     def _rebuildSticks(self):
 
         while self.verticalLayout.count() > 0:
             item = self.verticalLayout.takeAt(0)
+            if item.widget() is not None:
+                item.widget().deleteLater()
             self.verticalLayout.removeItem(item)
+
+        self.options = ui.ProfileOptions.ProfileOptions()
+        self.verticalLayout.addWidget(self.options)
 
         self.joysticks.clear()
         if self.curData is not None:

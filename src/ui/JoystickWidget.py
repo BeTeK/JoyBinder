@@ -27,6 +27,7 @@ class JoystickWidget(QtWidgets.QFrame, ui.JoystickWidgetUI.Ui_JoystickWidget):
             self.joyDataLayout.addWidget(btn)
 
         self.joyNameStr.setText(data.name)
+        self.index = None
 
     def setJoyData(self, data):
         self.data = data
@@ -43,3 +44,8 @@ class JoystickWidget(QtWidgets.QFrame, ui.JoystickWidgetUI.Ui_JoystickWidget):
     def getName(self):
         return self.data.name
 
+    def setIndex(self, index):
+        self.index = index
+
+    def getIndex(self):
+        return self.index

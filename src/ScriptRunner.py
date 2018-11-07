@@ -1,5 +1,6 @@
 
 import pyautogui
+pyautogui.FAILSAFE = False
 
 class ScriptRunner:
     def __init__(self):
