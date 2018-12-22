@@ -8,8 +8,7 @@ class ScriptRunner:
         self.globals = {}
         self.actions = {}
         self.curTime = None
-        self.prevState = None
-        self.curState = None
+        self.joyState = None
         self._makeGlobals()
 
     def _makeGlobals(self):
@@ -29,12 +28,10 @@ class ScriptRunner:
     def setScript(self, txt):
         self.txt = txt
 
-    def runScript(self, prevState, curState, curTime):
+    def runScript(self, joyModel, curTime):
         self.curTime = curTime
-        self.prevState = prevState
-        self.curState = curState
-        self.globals["curState"] = curState
-        self.globals["prevState"] = prevState
+        self.joyState = joyModel
+        self.globals["joyModel"] = joyModel
 
         try:
             exec(self.txt, self.globals)

@@ -3,11 +3,13 @@ from PyQt5 import QtWidgets
 import ui
 import ui.MainDialog
 import XInputReader.XInputReader
+import model.Joysticks
 
 def showUI(options):
     with XInputReader.XInputReader() as reader:
         app = QtWidgets.QApplication(sys.argv)
-        ex = ui.MainDialog.MainDialog(reader)
+        joysticks = model.Joysticks.Joysticks(reader)
+        ex = ui.MainDialog.MainDialog(joysticks)
         ex.show()
         sys.exit(app.exec_())
 

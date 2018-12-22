@@ -11,12 +11,14 @@ import ui.ProfileOptions
 
 class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    def __init__(self, reader):
+    def __init__(self, joysticks):
         super(QtWidgets.QMainWindow, self).__init__()
         self.setupUi(self)
         self.quitMenuItem.triggered.connect(self._quit)
 
-        self.inputReader = reader
+        self.joysticksModel = joysticks
+        self.joysticksModel.rescan()
+
         self.inputReader.rescan()
 
         self.lastData = None
@@ -73,18 +75,13 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         file.save(filePath)
 
     def _onPollTimerTimeout(self):
-        self.lastData = self.curData
-        self.curData = self.inputReader.poll()
-
-        if set(self.joysticks.keys()) != set([i.guid for i in self.curData]):
+        changed = self.joysticksModel.poll()
+        if changed:
             self._rebuildSticks()
 
-        for i in self.curData:
-            self.joysticks[i.guid].setJoyData(i)
-
-        self.scriptRunner.setScript(self.expertEditor.getCode())
-        if self.lastData is not None and self.curData is not None:
-            self.scriptRunner.runScript(self.lastData, self.curData, time.time())
+        if self.joysticksModel.ready():
+            self.scriptRunner.setScript(self.expertEditor.getCode())
+            self.scriptRunner.runScript(self.joysticksModel, time.time())
 
         if self.options is not None:
             self.options.setJoyData(self.joysticks)
@@ -101,9 +98,8 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         self.verticalLayout.addWidget(self.options)
 
         self.joysticks.clear()
-        if self.curData is not None:
-            for i in self.curData:
-                self.joysticks[i.guid] = ui.JoystickWidget.JoystickWidget(i)
+        for key, value in self.joysticksModel.getJoysticks():
+            self.joysticks[key] = ui.JoystickWidget.JoystickWidget(value.getName())
 
         for i in self.joysticks.values():
             self.verticalLayout.addWidget(i)

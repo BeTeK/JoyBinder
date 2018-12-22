@@ -4,10 +4,9 @@ import ui.ButtonForm
 import ui.AxisWidget
 
 class JoystickWidget(QtWidgets.QFrame, ui.JoystickWidgetUI.Ui_JoystickWidget):
-    def __init__(self, data):
+    def __init__(self, name):
         super(QtWidgets.QFrame, self).__init__()
         self.setupUi(self)
-        self.data = data
         self.buttonWidgets = []
 
         self.axisWidgets = []
@@ -26,7 +25,7 @@ class JoystickWidget(QtWidgets.QFrame, ui.JoystickWidgetUI.Ui_JoystickWidget):
             self.buttonWidgets.append(btn)
             self.joyDataLayout.addWidget(btn)
 
-        self.joyNameStr.setText(data.name)
+        self.joyNameStr.setText(name)
         self.index = None
 
     def setJoyData(self, data):
