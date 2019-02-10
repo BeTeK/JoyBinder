@@ -5,16 +5,16 @@ import ui.TextEditor
 import Options
 import ScriptRunner
 import time
-import os
 import ProfileFile
 import ui.ProfileOptions
+from ExceptionLogger import logException
 
 class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def __init__(self, joysticks):
         super(QtWidgets.QMainWindow, self).__init__()
         self.setupUi(self)
-        self.quitMenuItem.triggered.connect(self._quit)
+        self.quitMenuItem.triggered.connect(lambda : logException(self._quit))
 
         self.joysticksModel = joysticks
         self.joysticksModel.rescan()
@@ -25,7 +25,7 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.joysticks = {}
         self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self._onPollTimerTimeout)
+        self.timer.timeout.connect(lambda : logException(self._onPollTimerTimeout))
         self.timer.start(1000/100)
         self._rebuildSticks()
 
@@ -37,9 +37,9 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         self.splitter.restoreGeometry(Options.get("MainWindow-splitter-geometry", QtCore.QByteArray()))
         self.splitter.restoreState(Options.get("MainWindow-splitter-state", QtCore.QByteArray()))
 
-        self.saveMenuItem.triggered.connect(self._save)
-        self.saveAsMenuItem.triggered.connect(self._saveAs)
-        self.openMenuItem.triggered.connect(self._open)
+        self.saveMenuItem.triggered.connect(lambda : logException(self._save))
+        self.saveAsMenuItem.triggered.connect(lambda : logException(self._saveAs))
+        self.openMenuItem.triggered.connect(lambda : logException(self._open))
         self.currentFileName = None
         self.options = None
 
