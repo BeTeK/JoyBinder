@@ -19,8 +19,6 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         self.joysticksModel = joysticks
         self.joysticksModel.rescan()
 
-        self.inputReader.rescan()
-
         self.lastData = None
         self.curData = None
         self.scriptRunner = ScriptRunner.ScriptRunner()
@@ -54,6 +52,7 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
             file = ProfileFile.ProfileFile()
             file.load(filePath[0])
             self.expertEditor.setCode(file.getCode())
+            self.options.setJoyIndies(file.getJoyMappings())
 
     def _saveAs(self):
         path = Options.get("open-path", "")
@@ -72,6 +71,7 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         file = ProfileFile.ProfileFile()
         self.currentFileName = filePath
         file.setCode(self.expertEditor.getCode())
+        file.setMappings(self.options.getJoyIndies())
         file.save(filePath)
 
     def _onPollTimerTimeout(self):
@@ -79,12 +79,16 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         if changed:
             self._rebuildSticks()
 
-        if self.joysticksModel.ready():
-            self.scriptRunner.setScript(self.expertEditor.getCode())
-            self.scriptRunner.runScript(self.joysticksModel, time.time())
-
         if self.options is not None:
             self.options.setJoyData(self.joysticks)
+
+        if self.joysticksModel.ready():
+            self.scriptRunner.setScript(self.expertEditor.getCode())
+            self.scriptRunner.runScript(self.joysticksModel, self.options.getJoyIndies() ,time.time())
+
+        for i in self.joysticks.values():
+            i.update()
+
 
     def _rebuildSticks(self):
 
@@ -98,8 +102,8 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         self.verticalLayout.addWidget(self.options)
 
         self.joysticks.clear()
-        for key, value in self.joysticksModel.getJoysticks():
-            self.joysticks[key] = ui.JoystickWidget.JoystickWidget(value.getName())
+        for key, value in self.joysticksModel.getJoysticks().items():
+            self.joysticks[key] = ui.JoystickWidget.JoystickWidget(value)
 
         for i in self.joysticks.values():
             self.verticalLayout.addWidget(i)

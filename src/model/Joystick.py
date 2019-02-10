@@ -13,6 +13,18 @@ class Joystick:
         self.prevData = self.curData
         self.curData = data
 
+    def getAxises(self, new):
+        if new:
+            return self.curData.axises
+        else:
+            return self.prevData.axises
+
+    def getButtons(self, new):
+        if new:
+            return self.curData.buttons
+        else:
+            return self.prevData.buttons
+
     def getGuid(self):
         return self.guid
 
@@ -20,4 +32,4 @@ class Joystick:
         return self.curData.name
 
     def isButtonPressed(self, btnNum):
-        
+        return self.curData[btnNum]

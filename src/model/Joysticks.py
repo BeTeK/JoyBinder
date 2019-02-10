@@ -2,7 +2,7 @@ import model.Joystick
 from functools import reduce
 
 class Joysticks:
-    def __self__(self, reader):
+    def __init__(self, reader):
         self.joysticks = {}
         self.reader = reader
 
@@ -31,6 +31,8 @@ class Joysticks:
     def getJoysticks(self):
         return self.joysticks
 
+    def getJoystick(self, name):
+        return self.joysticks[name]
 
 
 

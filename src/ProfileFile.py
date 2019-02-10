@@ -1,5 +1,5 @@
 import json
-
+import base64
 
 
 class ProfileFile:
@@ -15,13 +15,20 @@ class ProfileFile:
             self.type = contents["type"]
             self.code = contents["code"]
             self.joyMappings = contents["joyMappings"]
+            self.joyMappings = {}
+            for index, guid in contents["joyMappings"].items():
+                self.joyMappings[int(index)] = base64.b64decode(guid.encode("utf-8"))
 
     def save(self, filename):
+        encodedMappings = {}
+        for index, guid in self.joyMappings.items():
+            encodedMappings[index] = base64.b64encode(guid).decode("utf-8")
+
         contents = {
             "version" : "1.0",
             "type" : self.type,
             "code" : self.code,
-            "joyMappings" : self.joyMappings
+            "joyMappings" : encodedMappings
         }
         with open(filename, "wb") as f:
             f.write(json.dumps(contents).encode("utf-8"))
@@ -37,9 +44,9 @@ class ProfileFile:
     def getCode(self):
         return self.code
 
-    def setJoyName(self, joyGuid, name):
-        self.joyMappings[joyGuid] = name
-
     def getJoyMappings(self):
         return self.joyMappings
+
+    def setMappings(self, mappings):
+        self.joyMappings = mappings
 

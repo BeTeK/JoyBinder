@@ -6,6 +6,8 @@ import XInputReader.XInputReader
 import model.Joysticks
 
 def showUI(options):
+    sys.stdout = sys.stderr
+
     with XInputReader.XInputReader() as reader:
         app = QtWidgets.QApplication(sys.argv)
         joysticks = model.Joysticks.Joysticks(reader)

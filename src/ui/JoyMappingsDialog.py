@@ -119,5 +119,6 @@ class JoyMappingDelegate(QtWidgets.QStyledItemDelegate):
         if index.column() == 0:
             super(QtWidgets.QStyledItemDelegate, self).setModelData(editor, model, index)
 
-        joyIndex = editor.currentIndex()
+        joyIndex = editor.currentData()
+
         index.model().setData(index, joyIndex, QtCore.Qt.DisplayRole)

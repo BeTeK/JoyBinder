@@ -8,7 +8,8 @@ class ScriptRunner:
         self.globals = {}
         self.actions = {}
         self.curTime = None
-        self.joyState = None
+        self.joysticks = None
+        self.joyIndies = None
         self._makeGlobals()
 
     def _makeGlobals(self):
@@ -24,13 +25,16 @@ class ScriptRunner:
         self.globals["setBtnUp"] = self._setButtonUpCommand
         self.globals["setKeyDown"] = self._setKeyDownCommad
         self.globals["setKeyUp"] = self._setKeyUpCommad
+        self.globals["btn"] = self._btnId
+        self.globals["axis"] = self._axisId
 
     def setScript(self, txt):
         self.txt = txt
 
-    def runScript(self, joyModel, curTime):
+    def runScript(self, joyModel, joyIndies, curTime):
         self.curTime = curTime
-        self.joyState = joyModel
+        self.joysticks = joyModel
+        self.joyIndies = joyIndies
         self.globals["joyModel"] = joyModel
 
         try:
@@ -39,8 +43,24 @@ class ScriptRunner:
             print(e)
         except NameError as e:
             print(e)
+        except Exception as e:
+            print(e)
 
         self._executeQueue(curTime)
+
+    def _getJoyBtn(self, id, new):
+        joyId = self.joyIndies[id[0]]
+        return self.joysticks.getJoystick(joyId).getButtons(new)[id[1]]
+
+    def _getJoyAxis(self, id, new):
+        joyId = self.joyIndies[id[0]]
+        return self.joysticks.getJoystick(joyId).getAxises(new)[id[1]]
+
+    def _btnId(self, joyIndex, btnIndex):
+        return (joyIndex, btnIndex, )
+
+    def _axisId(selfs, joyIndex, axisIndex):
+        return (joyIndex, axisIndex, )
 
     def _executeQueue(self, time):
         queuesToExecute = sorted(filter(lambda x: x <= time, self.actions.keys()))
@@ -51,37 +71,38 @@ class ScriptRunner:
 
             del self.actions[i]
 
-    def _onJoyBtnDown(self, joyId, btnIndex, *params):
-        if not self.prevState[int(joyId)].buttons[btnIndex] and self.curState[int(joyId)].buttons[btnIndex]:
+    def _onJoyBtnDown(self, id, *params):
+        if not self._getJoyBtn(id, False) and self._getJoyBtn(id, True):
             self._addToQueue(params)
 
-    def _onJoyBtnUp(self, joyId, btnIndex, *params):
-        if self.prevState[int(joyId)].buttons[btnIndex] and not self.curState[int(joyId)].buttons[btnIndex]:
+    def _onJoyBtnUp(self, id, *params):
+        if self._getJoyBtn(id, False) and not self._getJoyBtn(id, True):
             self._addToQueue(params)
 
-    def _onJoyAxisRange(self, joyId, axisIndex, left, right, *params):
+    def _onJoyAxisRange(self, id, left, right, *params):
         minAxisVal = min(left, right)
         maxAxisVal = max(left, right)
-        curVal = self.curState[int(joyId)].axises[axisIndex]
+        curVal = self._getJoyAxis(id, True)
 
         if minAxisVal <= curVal and curVal <= maxAxisVal:
             self._addToQueue(params)
 
 
-    def _onJoyAxisExits(self, joyId, axisIndex, left, right, *params):
+    def _onJoyAxisExits(self, id, left, right, *params):
         minAxisVal = min(left, right)
         maxAxisVal = max(left, right)
-        prevVal = self.prevState[int(joyId)].axises[axisIndex]
-        curVal = self.curState[int(joyId)].axises[axisIndex]
+
+        prevVal = self._getJoyAxis(id, False)
+        curVal = self._getJoyAxis(id, True)
 
         if not (minAxisVal <= curVal and curVal <= maxAxisVal) and minAxisVal <= prevVal and prevVal <= maxAxisVal:
             self._addToQueue(params)
 
-    def _onJoyAxisEnters(self, joyId, axisIndex, left, right, *params):
+    def _onJoyAxisEnters(self, id, left, right, *params):
         minAxisVal = min(left, right)
         maxAxisVal = max(left, right)
-        prevVal = self.prevState[int(joyId)].axises[axisIndex]
-        curVal = self.curState[int(joyId)].axises[axisIndex]
+        prevVal = self._getJoyAxis(id, False)
+        curVal = self._getJoyAxis(id, True)
 
         if minAxisVal <= curVal and curVal <= maxAxisVal and not (minAxisVal <= prevVal and prevVal <= maxAxisVal):
             self._addToQueue(params)
