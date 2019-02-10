@@ -49,18 +49,24 @@ class ScriptRunner:
         self._executeQueue(curTime)
 
     def _getJoyBtn(self, id, new):
+        if id[2] != "btn":
+            raise Exception("Wrong type of id. type is {0} should be btn".format(id[2]))
+
         joyId = self.joyIndies[id[0]]
         return self.joysticks.getJoystick(joyId).getButtons(new)[id[1]]
 
     def _getJoyAxis(self, id, new):
+        if id[2] != "axis":
+            raise Exception("Wrong type of id. type is {0} should be axis".format(id[2]))
+
         joyId = self.joyIndies[id[0]]
         return self.joysticks.getJoystick(joyId).getAxises(new)[id[1]]
 
     def _btnId(self, joyIndex, btnIndex):
-        return (joyIndex, btnIndex, )
+        return (joyIndex, btnIndex, "btn")
 
     def _axisId(selfs, joyIndex, axisIndex):
-        return (joyIndex, axisIndex, )
+        return (joyIndex, axisIndex, "axis")
 
     def _executeQueue(self, time):
         queuesToExecute = sorted(filter(lambda x: x <= time, self.actions.keys()))
