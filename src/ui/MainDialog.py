@@ -3,7 +3,7 @@ from ui.MainWindowUI import Ui_MainWindow
 import ui.JoystickWidget
 import ui.TextEditor
 import Options
-import ScriptRunner
+import ScriptRunnerFactory
 import time
 import ProfileFile
 import ui.ProfileOptions
@@ -21,7 +21,7 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.lastData = None
         self.curData = None
-        self.scriptRunner = ScriptRunner.ScriptRunner()
+        self.scriptRunner = ScriptRunnerFactory.buildScriptRunner()
 
         self.joysticks = {}
         self.timer = QtCore.QTimer(self)

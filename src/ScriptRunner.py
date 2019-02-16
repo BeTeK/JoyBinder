@@ -3,7 +3,8 @@ import pyautogui
 pyautogui.FAILSAFE = False
 
 class ScriptRunner:
-    def __init__(self):
+    def __init__(self, vjoy):
+        self.vjoy = vjoy
         self.txt = ""
         self.globals = {}
         self.actions = {}
@@ -25,6 +26,11 @@ class ScriptRunner:
         self.globals["setBtnUp"] = self._setButtonUpCommand
         self.globals["setKeyDown"] = self._setKeyDownCommad
         self.globals["setKeyUp"] = self._setKeyUpCommad
+        self.globals["setJoyKeyUp"] = self._setJoyKeyUpCommad
+        self.globals["setJoyKeyDown"] = self._setJoyKeyDownCommad
+        self.globals["setJoyAxis"] = self._setJoyAxisCommand
+        self.globals["getJoyAxis"] = self._getJoyAxisCommand
+        self.globals["getJoyBtn"] = self._getJoyBtnCommand
         self.globals["btn"] = self._btnId
         self.globals["axis"] = self._axisId
 
@@ -39,6 +45,7 @@ class ScriptRunner:
 
         try:
             exec(self.txt, self.globals)
+            self._executeQueue(curTime)
         except SyntaxError as e:
             print(e)
         except NameError as e:
@@ -46,7 +53,7 @@ class ScriptRunner:
         except Exception as e:
             print(e)
 
-        self._executeQueue(curTime)
+        self.vjoy.update()
 
     def _getJoyBtn(self, id, new):
         if id[2] != "btn":
@@ -63,10 +70,10 @@ class ScriptRunner:
         return self.joysticks.getJoystick(joyId).getAxises(new)[id[1]]
 
     def _btnId(self, joyIndex, btnIndex):
-        return (joyIndex, btnIndex, "btn")
+        return (joyIndex, btnIndex - 1, "btn")
 
     def _axisId(selfs, joyIndex, axisIndex):
-        return (joyIndex, axisIndex, "axis")
+        return (joyIndex, axisIndex - 1, "axis")
 
     def _executeQueue(self, time):
         queuesToExecute = sorted(filter(lambda x: x <= time, self.actions.keys()))
@@ -154,3 +161,20 @@ class ScriptRunner:
             pyautogui.keyUp(key)
 
         print("push key {0} state {1}".format(key, down))
+
+    def _setJoyKeyUpCommad(self, joyIndex, keyIndex):
+        return lambda: self.vjoy.getJoy(joyIndex).setButton(keyIndex, False)
+
+    def _setJoyKeyDownCommad(self, joyIndex, keyIndex):
+        return lambda: self.vjoy.getJoy(joyIndex).setButton(keyIndex, True)
+
+    def _setJoyAxisCommand(self, joyIndex, axisIndex, value):
+        return lambda: self.vjoy.getJoy(joyIndex).setAxis(axisIndex, int(value * (2**15 + 1)))
+
+    def _getJoyAxisCommand(self, id, current = True):
+        val = self._getJoyAxis(id, current)
+        return val / 2**16
+
+    def _getJoyBtnCommand(self, id, current = True):
+        val = self._getJoyBtn(id, current)
+        return val
