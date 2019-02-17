@@ -8,6 +8,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+import ExceptionLogger
+
+
 class Ui_JoyMappingsDialog(object):
     def setupUi(self, JoyMappingsDialog):
         JoyMappingsDialog.setObjectName("JoyMappingsDialog")
@@ -32,8 +35,8 @@ class Ui_JoyMappingsDialog(object):
         self.horizontalLayout.addLayout(self.verticalLayout)
 
         self.retranslateUi(JoyMappingsDialog)
-        self.okCancelBtn.accepted.connect(JoyMappingsDialog.accept)
-        self.okCancelBtn.rejected.connect(JoyMappingsDialog.reject)
+        self.okCancelBtn.accepted.connect(lambda: ExceptionLogger.logException(JoyMappingsDialog.accept()))
+        self.okCancelBtn.rejected.connect(lambda: ExceptionLogger.logException(JoyMappingsDialog.reject()))
         QtCore.QMetaObject.connectSlotsByName(JoyMappingsDialog)
 
     def retranslateUi(self, JoyMappingsDialog):

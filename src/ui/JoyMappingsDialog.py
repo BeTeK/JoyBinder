@@ -1,5 +1,7 @@
 from PyQt5 import QtWidgets, QtGui, QtCore, Qt
 import PyQt5
+
+import ExceptionLogger
 import ui.JoyMappingsDialogUI
 import Options
 
@@ -14,8 +16,8 @@ class JoyMappingsDialog(QtWidgets.QDialog, ui.JoyMappingsDialogUI.Ui_JoyMappings
         self.mappingTable.horizontalHeader().setStretchLastSection(True)
         self.restoreGeometry(Options.get("Mappings-dialog-geometry", QtCore.QByteArray()))
         self.mappingTable.restoreGeometry(Options.get("Mappings-dialog-mappings-table-geometry", QtCore.QByteArray()))
-        self.okCancelBtn.accepted.connect(self._accept)
-        self.okCancelBtn.rejected.connect(self._reject)
+        self.okCancelBtn.accepted.connect(lambda: ExceptionLogger.logException(self._accept()))
+        self.okCancelBtn.rejected.connect(lambda: ExceptionLogger.logException(self._reject()))
         self.mappingTable.setColumnWidth(0, int(Options.get("Mappings-dialog-table-width", 100)))
         self.returnData = None
 
