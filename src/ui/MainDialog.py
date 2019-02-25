@@ -83,7 +83,10 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
             self.options.setJoyData(self.joysticks)
 
         if self.joysticksModel.ready():
-            self.scriptRunner.setScript(self.expertEditor.getCode())
+            code = self.expertEditor.getCodeIfChanged()
+            if code is not None:
+                self.scriptRunner.setScript(code)
+
             self.scriptRunner.runScript(self.joysticksModel, self.options.getJoyIndies() ,time.time())
 
         for i in self.joysticks.values():

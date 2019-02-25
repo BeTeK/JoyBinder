@@ -11,10 +11,13 @@ class ScriptRunner:
         self.curTime = None
         self.joysticks = None
         self.joyIndies = None
+        self.codeAdded = False
         self._makeGlobals()
 
     def _makeGlobals(self):
-        self.globals.clear()
+        self.codeAdded = False
+
+        self.globals = {}
         self.globals["onAlways"] = self._onAlways
         self.globals["onJoyBtnDown"] = self._onJoyBtnDown
         self.globals["onJoyBtnUp"] = self._onJoyBtnUp
@@ -36,6 +39,7 @@ class ScriptRunner:
 
     def setScript(self, txt):
         self.txt = txt
+        self._makeGlobals()
 
     def runScript(self, joyModel, joyIndies, curTime):
         self.curTime = curTime
@@ -45,6 +49,7 @@ class ScriptRunner:
 
         try:
             exec(self.txt, self.globals)
+
             self._executeQueue(curTime)
         except SyntaxError as e:
             print(e)
@@ -146,7 +151,8 @@ class ScriptRunner:
         return lambda: self._setButton(joyId, False)
 
     def _setButton(self, joyId, down):
-        print("push joy {0} state {1}".format(joyId, down))
+        # print("push joy {0} state {1}".format(joyId, down))
+        pass
 
     def _setKeyDownCommad(self, key):
         return lambda: self._setKey(key, True)
@@ -160,7 +166,7 @@ class ScriptRunner:
         else:
             pyautogui.keyUp(key)
 
-        print("push key {0} state {1}".format(key, down))
+        #print("push key {0} state {1}".format(key, down))
 
     def _setJoyKeyUpCommad(self, joyIndex, keyIndex):
         return lambda: self.vjoy.getJoy(joyIndex).setButton(keyIndex, False)

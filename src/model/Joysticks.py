@@ -22,6 +22,9 @@ class Joysticks:
         return joysticksChanged
 
     def ready(self):
+        if len(self.joysticks) == 0:
+            return False
+
         readyLst = map(lambda x: x.ready(), self.joysticks.values())
         return reduce(lambda left, right: left and right, readyLst)
 
