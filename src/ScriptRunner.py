@@ -31,6 +31,8 @@ class ScriptRunner:
         self.globals["setKeyUp"] = self._setKeyUpCommad
         self.globals["setJoyKeyUp"] = self._setJoyKeyUpCommad
         self.globals["setJoyKeyDown"] = self._setJoyKeyDownCommad
+        self.globals["setMouseKeyDown"] = self._setMouseKeyDownCommand
+        self.globals["setMouseUpDown"] = self._setMouseKeyUpCommand
         self.globals["setJoyAxis"] = self._setJoyAxisCommand
         self.globals["getJoyAxis"] = self._getJoyAxisCommand
         self.globals["getJoyBtn"] = self._getJoyBtnCommand
@@ -184,3 +186,9 @@ class ScriptRunner:
     def _getJoyBtnCommand(self, id, current = True):
         val = self._getJoyBtn(id, current)
         return val
+
+    def _setMouseKeyDownCommand(self, key):
+        pyautogui.mouseDown(button=key)
+
+    def _setMouseKeyUpCommand(self, key):
+        pyautogui.mouseUp(button=key)

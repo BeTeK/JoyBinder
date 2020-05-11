@@ -82,12 +82,12 @@ class MainDialog(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.options is not None:
             self.options.setJoyData(self.joysticks)
 
-        if self.joysticksModel.ready():
+        if self.joysticksModel.ready() and self.options:
             code = self.expertEditor.getCodeIfChanged()
             if code is not None:
                 self.scriptRunner.setScript(code)
 
-            self.scriptRunner.runScript(self.joysticksModel, self.options.getJoyIndies() ,time.time())
+            self.scriptRunner.runScript(self.joysticksModel, self.options.getJoyIndies(), time.time())
 
         for i in self.joysticks.values():
             i.update()

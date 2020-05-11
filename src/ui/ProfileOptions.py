@@ -8,7 +8,7 @@ class ProfileOptions(ui.ProfileOptionsUI.Ui_ProfileOptions, QtWidgets.QFrame):
     def __init__(self, parent = None):
         super(QtWidgets.QFrame, self).__init__(parent)
         self.setupUi(self)
-        self.mappingsBtn.pressed.connect(lambda: ExceptionLogger.logException(self._pressed()))
+        self.mappingsBtn.pressed.connect(lambda: ExceptionLogger.logException(self._pressed))
         self.joyData = None
         self.joyIndies = {}
 
