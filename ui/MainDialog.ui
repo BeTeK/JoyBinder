@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>683</width>
-    <height>543</height>
+    <width>1321</width>
+    <height>753</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -20,48 +20,30 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="mainHLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>69</width>
-         <height>482</height>
-        </rect>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="widgetResizable">
+        <bool>true</bool>
        </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <spacer name="scrollSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1178</width>
+          <height>692</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout"/>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="verticalLayoutWidget">
+       <layout class="QVBoxLayout" name="mainHLayout"/>
       </widget>
      </widget>
     </item>
@@ -72,7 +54,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>683</width>
+     <width>1321</width>
      <height>21</height>
     </rect>
    </property>
@@ -80,6 +62,10 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="openMenuItem"/>
+    <addaction name="saveMenuItem"/>
+    <addaction name="saveAsMenuItem"/>
+    <addaction name="separator"/>
     <addaction name="quitMenuItem"/>
    </widget>
    <addaction name="menuFile"/>
@@ -88,6 +74,21 @@
   <action name="quitMenuItem">
    <property name="text">
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="openMenuItem">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="saveMenuItem">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="saveAsMenuItem">
+   <property name="text">
+    <string>Save as</string>
    </property>
   </action>
  </widget>

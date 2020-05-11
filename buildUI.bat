@@ -10,3 +10,13 @@ call pyuic5 ui\JoystickWidget.ui > src\ui\JoystickWidgetUI.py
 
 echo "Generating AxisWidget.ui"
 call pyuic5 ui\AxisWidget.ui > src\ui\AxisWidgetUI.py
+
+echo "Generating JoyMappingsDialog.ui"
+call pyuic5 ui\JoyMappingsDialog.ui > src\ui\JoyMappingsDialogUI.py
+
+echo "Generating ProfileOptions.ui"
+call pyuic5 ui\ProfileOptions.ui > src\ui\ProfileOptionsUI.py
+
+echo "Generating ExpertEditor.ui"
+call pyuic5 ui\ExpertEditor.ui > src\ui\ExpertEditorUI.py
+
